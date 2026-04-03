@@ -6,282 +6,35 @@
     <title>아침 뉴스 브리핑</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            padding: 40px 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        h1 {
-            font-family: 'Noto Serif KR', serif;
-            font-size: 42px;
-            font-weight: 900;
-            color: white;
-            letter-spacing: -1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: rgba(255,255,255,0.9);
-            margin-top: 10px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .last-update {
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-            margin-top: 15px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .refresh-btn {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(255,255,255,0.3);
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 12px;
-            padding: 12px 20px;
-            cursor: pointer;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            z-index: 2;
-        }
-
-        .refresh-btn:hover:not(:disabled) {
-            background: rgba(255,255,255,0.4);
-            transform: translateY(-2px);
-        }
-
-        .refresh-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .refresh-icon {
-            width: 18px;
-            height: 18px;
-        }
-
-        .refresh-icon.spinning {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .categories {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            overflow-x: auto;
-            padding: 5px;
-            flex-wrap: wrap;
-        }
-
-        .category-btn {
-            background: white;
-            color: #2c3e50;
-            border: 2px solid #e1e8ed;
-            border-radius: 12px;
-            padding: 14px 24px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            white-space: nowrap;
-        }
-
-        .category-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .category-btn.active {
-            color: white;
-            border: none;
-        }
-
-        .category-btn.active.all { background: linear-gradient(135deg, #2c3e50 0%, #2c3e50dd 100%); box-shadow: 0 4px 15px #2c3e5040; }
-        .category-btn.active.politics { background: linear-gradient(135deg, #e74c3c 0%, #e74c3cdd 100%); box-shadow: 0 4px 15px #e74c3c40; }
-        .category-btn.active.society { background: linear-gradient(135deg, #3498db 0%, #3498dbdd 100%); box-shadow: 0 4px 15px #3498db40; }
-        .category-btn.active.economy { background: linear-gradient(135deg, #27ae60 0%, #27ae60dd 100%); box-shadow: 0 4px 15px #27ae6040; }
-        .category-btn.active.tech { background: linear-gradient(135deg, #9b59b6 0%, #9b59b6dd 100%); box-shadow: 0 4px 15px #9b59b640; }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(46, 60, 80, 0.2);
-            border-top: 4px solid #2c3e50;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-        }
-
-        .newspaper-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 3px solid rgba(46, 60, 80, 0.1);
-        }
-
-        .newspaper-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-        }
-
-        .newspaper-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid;
-        }
-
-        .newspaper-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'Noto Serif KR', serif;
-        }
-
-        .newspaper-name {
-            font-family: 'Noto Serif KR', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        .news-item {
-            padding: 16px;
-            border-radius: 12px;
-            border-left: 4px solid;
-            margin-bottom: 15px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .news-item:hover {
-            transform: translateX(4px);
-        }
-
-        .news-title {
-            font-family: 'Noto Serif KR', serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: #2c3e50;
-            line-height: 1.5;
-            margin-bottom: 8px;
-        }
-
-        .news-summary {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .news-date {
-            font-size: 12px;
-            color: #999;
-            margin-top: 8px;
-        }
-
-        .no-news {
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-            padding: 40px 20px;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 32px;
-            }
-            
-            .refresh-btn {
-                position: static;
-                margin-top: 20px;
-            }
-
-            .categories {
-                flex-wrap: nowrap;
-                overflow-x: scroll;
-            }
-
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 40px 30px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%); pointer-events: none; }
+        h1 { font-family: 'Noto Serif KR', serif; font-size: 42px; font-weight: 900; color: white; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); position: relative; z-index: 1; }
+        .subtitle { font-size: 16px; color: rgba(255,255,255,0.9); margin-top: 10px; position: relative; z-index: 1; }
+        .last-update { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 15px; position: relative; z-index: 1; }
+        .refresh-btn { position: absolute; top: 30px; right: 30px; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); border-radius: 12px; padding: 12px 20px; cursor: pointer; color: white; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px); z-index: 2; }
+        .refresh-btn:hover:not(:disabled) { background: rgba(255,255,255,0.4); transform: translateY(-2px); }
+        .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .refresh-icon { width: 18px; height: 18px; }
+        .refresh-icon.spinning { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading { text-align: center; padding: 60px 20px; background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(46, 60, 80, 0.2); border-top: 4px solid #2c3e50; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; }
+        .newspaper-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 3px solid rgba(46, 60, 80, 0.1); }
+        .newspaper-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+        .newspaper-header { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid; }
+        .newspaper-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 700; font-family: 'Noto Serif KR', serif; }
+        .newspaper-name { font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700; color: #2c3e50; }
+        .news-item { padding: 16px; border-radius: 12px; border-left: 4px solid; margin-bottom: 15px; transition: all 0.2s ease; cursor: pointer; }
+        .news-item:hover { transform: translateX(4px); }
+        .news-title { font-family: 'Noto Serif KR', serif; font-size: 16px; font-weight: 700; color: #2c3e50; line-height: 1.5; margin-bottom: 8px; }
+        .news-summary { font-size: 14px; color: #666; line-height: 1.6; }
+        .news-date { font-size: 12px; color: #999; margin-top: 8px; }
+        .no-news { text-align: center; color: #999; font-size: 14px; padding: 40px 20px; }
+        @media (max-width: 768px) { h1 { font-size: 32px; } .refresh-btn { position: static; margin-top: 20px; } .news-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -297,204 +50,37 @@
                 새로고침
             </button>
         </header>
-
-        <div class="categories">
-            <button class="category-btn active all" onclick="changeCategory('all')">📰 전체</button>
-            <button class="category-btn politics" onclick="changeCategory('politics')">🏛️ 정치</button>
-            <button class="category-btn society" onclick="changeCategory('society')">👥 사회</button>
-            <button class="category-btn economy" onclick="changeCategory('economy')">💼 경제</button>
-            <button class="category-btn tech" onclick="changeCategory('tech')">⚡ 과학/기술</button>
-        </div>
-
         <div id="content"></div>
     </div>
-
     <script>
-        const newspapers = [
-            {
-                name: '조선일보',
-                color: '#e74c3c',
-                feeds: {
-                    all: 'https://www.chosun.com/arc/outboundfeeds/rss/',
-                    politics: 'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml&category=politics',
-                    society: 'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml&category=national',
-                    economy: 'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml&category=economy',
-                    tech: 'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml&category=tech'
-                }
-            },
-            {
-                name: '중앙일보',
-                color: '#3498db',
-                feeds: {
-                    all: 'https://www.joongang.co.kr/rss/allArticle.xml',
-                    politics: 'https://www.joongang.co.kr/rss/politics.xml',
-                    society: 'https://www.joongang.co.kr/rss/society.xml',
-                    economy: 'https://www.joongang.co.kr/rss/economy.xml',
-                    tech: 'https://www.joongang.co.kr/rss/it.xml'
-                }
-            },
-            {
-                name: '동아일보',
-                color: '#27ae60',
-                feeds: {
-                    all: 'https://rss.donga.com/total.xml',
-                    politics: 'https://rss.donga.com/politics.xml',
-                    society: 'https://rss.donga.com/national.xml',
-                    economy: 'https://rss.donga.com/economy.xml',
-                    tech: 'https://rss.donga.com/it.xml'
-                }
+        const newspapers = [{name:'조선일보',color:'#e74c3c',feed:'https://www.chosun.com/arc/outboundfeeds/rss/'},{name:'중앙일보',color:'#3498db',feed:'https://www.joongang.co.kr/rss/allArticle.xml'},{name:'동아일보',color:'#27ae60',feed:'https://rss.donga.com/total.xml'}];
+        
+        async function fetchRSS(url){
+            try{
+                const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                const d=await r.json();
+                return d.items?d.items.slice(0,5).map(i=>({title:i.title||'',summary:(i.description||'').replace(/<[^>]*>/g, '').substring(0,150)+'...',link:i.link||'',date:i.pubDate?new Date(i.pubDate).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):''})):[];
+            }catch(e){return [];}
+        }
+        
+        async function loadAllNews(){
+            const c=document.getElementById('content'),b=document.getElementById('refreshBtn'),i=document.getElementById('refreshIcon');
+            b.disabled=true;i.classList.add('spinning');
+            c.innerHTML='<div class="loading"><div class="spinner"></div><p>뉴스를 불러오는 중...</p></div>';
+            let html='<div class="news-grid">';
+            for(const n of newspapers){
+                const news=await fetchRSS(n.feed);
+                html+=`<div class="newspaper-card" style="border-color:${n.color}20"><div class="newspaper-header" style="border-color:${n.color}"><div class="newspaper-icon" style="background:linear-gradient(135deg,${n.color} 0%,${n.color}dd 100%);box-shadow:0 4px 12px ${n.color}40">${n.name.charAt(0)}</div><div class="newspaper-name">${n.name}</div></div>`;
+                if(news.length>0){
+                    news.forEach(item=>{html+=`<div class="news-item" style="background:${n.color}08;border-color:${n.color}" onclick="window.open('${item.link}','_blank')" onmouseover="this.style.background='${n.color}15'" onmouseout="this.style.background='${n.color}08'"><div class="news-title">${item.title}</div><div class="news-summary">${item.summary}</div><div class="news-date">${item.date}</div></div>`;});
+                }else{html+='<div class="no-news">뉴스를 불러올 수 없습니다</div>';}
+                html+='</div>';
             }
-        ];
-
-        let currentCategory = 'all';
-        let newsCache = {};
-
-        // RSS 파싱 함수
-        function parseRSS(xmlText) {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-            
-            const items = xmlDoc.querySelectorAll('item');
-            const news = [];
-            
-            items.forEach((item, index) => {
-                if (index >= 10) return;
-                
-                const title = item.querySelector('title')?.textContent || '';
-                const description = item.querySelector('description')?.textContent || '';
-                const link = item.querySelector('link')?.textContent || '';
-                const pubDate = item.querySelector('pubDate')?.textContent || '';
-                
-                const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
-                const summary = cleanDescription.substring(0, 150) + (cleanDescription.length > 150 ? '...' : '');
-                
-                news.push({
-                    title: title.trim(),
-                    summary: summary,
-                    link: link.trim(),
-                    date: pubDate ? new Date(pubDate).toLocaleDateString('ko-KR', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : ''
-                });
-            });
-            
-            return news;
+            c.innerHTML=html+'</div>';
+            document.getElementById('lastUpdate').textContent=`마지막 업데이트: ${new Date().toLocaleTimeString('ko-KR')}`;
+            b.disabled=false;i.classList.remove('spinning');
         }
-
-        async function fetchRSS(url) {
-            try {
-                // API 라우트 사용
-                const response = await fetch(`/api/rss?url=${encodeURIComponent(url)}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const xmlText = await response.text();
-                return parseRSS(xmlText);
-                
-            } catch (error) {
-                console.error('RSS 로드 실패:', error);
-                return [];
-            }
-        }
-
-        async function loadNews(newspaper, category) {
-            const feed = newspaper.feeds[category] || newspaper.feeds.all;
-            const news = await fetchRSS(feed);
-            return news.slice(0, 5);
-        }
-
-        async function loadAllNews() {
-            const content = document.getElementById('content');
-            const refreshBtn = document.getElementById('refreshBtn');
-            const refreshIcon = document.getElementById('refreshIcon');
-            
-            refreshBtn.disabled = true;
-            refreshIcon.classList.add('spinning');
-            
-            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>뉴스를 불러오는 중...</p></div>';
-
-            const newsData = {};
-            
-            for (const newspaper of newspapers) {
-                newsData[newspaper.name] = await loadNews(newspaper, currentCategory);
-            }
-
-            newsCache[currentCategory] = newsData;
-            displayNews(newsData);
-
-            document.getElementById('lastUpdate').textContent = 
-                `마지막 업데이트: ${new Date().toLocaleTimeString('ko-KR')}`;
-
-            refreshBtn.disabled = false;
-            refreshIcon.classList.remove('spinning');
-        }
-
-        function displayNews(newsData) {
-            const content = document.getElementById('content');
-            
-            let html = '<div class="news-grid">';
-            
-            for (const newspaper of newspapers) {
-                const news = newsData[newspaper.name] || [];
-                
-                html += `
-                    <div class="newspaper-card" style="border-color: ${newspaper.color}20">
-                        <div class="newspaper-header" style="border-color: ${newspaper.color}">
-                            <div class="newspaper-icon" style="background: linear-gradient(135deg, ${newspaper.color} 0%, ${newspaper.color}dd 100%); box-shadow: 0 4px 12px ${newspaper.color}40">
-                                ${newspaper.name.charAt(0)}
-                            </div>
-                            <div class="newspaper-name">${newspaper.name}</div>
-                        </div>
-                `;
-
-                if (news.length > 0) {
-                    news.forEach(item => {
-                        html += `
-                            <div class="news-item" 
-                                 style="background: ${newspaper.color}08; border-color: ${newspaper.color}"
-                                 onclick="window.open('${item.link}', '_blank')"
-                                 onmouseover="this.style.background='${newspaper.color}15'"
-                                 onmouseout="this.style.background='${newspaper.color}08'">
-                                <div class="news-title">${item.title}</div>
-                                <div class="news-summary">${item.summary}</div>
-                                <div class="news-date">${item.date}</div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    html += '<div class="no-news">뉴스를 불러올 수 없습니다</div>';
-                }
-
-                html += '</div>';
-            }
-            
-            html += '</div>';
-            content.innerHTML = html;
-        }
-
-        function changeCategory(category) {
-            currentCategory = category;
-            
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            if (newsCache[category]) {
-                displayNews(newsCache[category]);
-            } else {
-                loadAllNews();
-            }
-        }
-
-        window.onload = () => {
-            loadAllNews();
-        };
+        window.onload=()=>loadAllNews();
     </script>
 </body>
 </html>
