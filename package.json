@@ -1,0 +1,11 @@
+{
+  "name": "news-briefing",
+  "version": "1.0.0",
+  "description": "Korean News Briefing App",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build needed'",
+    "start": "vercel dev"
+  }
+}
